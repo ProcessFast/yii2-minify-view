@@ -1,9 +1,16 @@
 Yii 2 Minify View Component
 ===========================
 
-The main feature of this component - concatenate and compress files 
-connected through "AssetBundle". And added new functionality to upload them to AWS S3 bucket directly from minify folder on file generation. And it also adds functionality to generate assets and upload to S3 from console controller.But to have functionality of generating assests from console  [ Script runs it on deployment after composer install finishes. ] and uploading S3 you must have to follow rules of defining all the assets used in web application must be loaded everytime. You can differenttiate it with layouts but for every page in layout there should be same number of JS/CSS files. All the js/css files belongs to widgets must be also registered on page load instead of widget initialization. They must follow dependency structure in a way that all JS/CSS files generated follow same sequence in all the pages in same layout. Below in description i have added how i have given dependecies to my all asset bundles.
+Purpose of the Yii2 extension
+-----------------------------
+The main feature of this component is to concatenate and compress [GZIP] JS and CSS files listed in "AssetBundle" and allow application an option to upload them to AWS S3 bucket directly from minify folder on file generation.And present copressed files from S3 bucket to browser. Concatenation and compression of all files will be done on first time loading after deployment, for all the next requests assets will only be requested from S3 bucket.Optionally console request can also be sent to have all the assets coming from S3 bucket directly. Console request must be part of continuous deployment script.  
 
+
+Required to work accurately
+-------------------------------
+* It works with layouts. For instance different layouts can have different JS & CSS files which can be listed in different AssetBundle. 
+* There should be only one main AssetBundle which has all other asset bundles as dependecies. [Please check here how I have managed my assets.](https://github.com/ProcessFast/yii2-minify-view#my-asset-bundles-dependencies) 
+* All JS & CSS files [ mostly JS pluggins ] used in particular layout whether it belongs to a particular page which only required on widget initialization must be also added at in the main Asset file under dependency.  
 
 
 [![License](https://poser.pugx.org/ProcessFast/yii2-minify-view/license.svg)](https://packagist.org/packages/ProcessFast/yii2-minify-view)
@@ -50,7 +57,7 @@ return [
 	// ...
 	'components' => [
 		// ...
-		'view' => [
+		'view' => [         
 			'class' => '\processfast\yii\minify\View',
 			'enableMinify' => !YII_DEBUG,
 			'concatCss' => true, // concatenate css
@@ -68,28 +75,28 @@ return [
 			'excludeFiles' => [
             	'jquery.js', // exclude this file from minification
             	'app-[^.].js', // you may use regexp
-    ],
-    'excludeBundles' => [
+            ],
+            'excludeBundles' => [
             	\dev\helloworld\AssetBundle::class, // exclude this bundle from minification
-    ],
+            ],
             
-    // Extra options added in this extention fork
+            // Extra options added in this extention fork
    
-   'S3Upload'=> true,         
-   'awsBucket'=> null,
-   'assetsFolderPathPatch'=>null,
+            'S3Upload'=> true,         
+            'awsBucket'=> null,
+            'assetsFolderPathPatch'=>null,
    
-   'backendCheck'=>false,
-   'folderName'=>'minify',
+            'backendCheck'=>false,
+            'folderName'=>'minify',
 
-   // This 2 options only used when you are generating from Script before deployment from Console Controller
-   'modifyPath'=>false,
-   'modifyPathData'=>"",
+            // This 2 options only used when you are generating from Script before deployment from Console Controller
+            'modifyPath'=>false,
+            'modifyPathData'=>"",
 
 
-   'layoutPrefixArray'=>[],
-   'layoutPrefixCss'=>false,
-   'layoutPrefixJS'=>false
+            'layoutPrefixArray'=>[],
+            'layoutPrefixCss'=>false,
+            'layoutPrefixJS'=>false
             
             
 		]
@@ -97,8 +104,9 @@ return [
 ];
 ```
 
-New Configuration Options
--------------------------
+Documentation/Explanation of the Configuration Options
+------------------------------------------------------
+###New Configuration Options
 
 ```
  /**
@@ -118,30 +126,32 @@ New Configuration Options
      * @var boolean
      * It is for linking Resource folder to asset files
      * if Resources like images above one folder it should be "../" if two folders above "../../"
-     * You want to load all the images from s3 now you have images folder in root and you have dev , qa , prod folder
-     * and css and js inside those folder now you have to link images in those css file.
-     * You have to use this option to do that.
+     * Assume scenario where application wants to load all the images from s3 now you have images folder in root and you have dev, qa, prod folder which have JS/CSS files in that case this option is helpful to make a connection between assets and resources.
      */
     public $assetsFolderPathPatch = null ;
 
     /*
-     * boolean
-     * backend checke will help take asset from root/minify folder for backedn instead of root/backend/minifiy
-     * If backend and frontend has same assets and you want to use same location to store asset
-     * you can make thi true. By this it will use root/minify other then root/backedn/minify
-     * to copy files to S3
+     * @var boolean
+     * If application is advanced Yii2 application where assets for backend and frontend generated in different assets folder.
+     * For instance in nenand/yii2-advanced-templated assets for frontend are generated in ROOT/assets folder and for backend assets are generated in ROOT/backend/assets
+     * This option is for minify folder so if all the assets in backend are same as frontend, this option will allow application to just use ROOT/minify as the main folder by making it true. 
      */
     public $backendCheck = false ;
 
     /*
      * Folder name where minified files will be kept
-     * Here i have devided it will be used when $backendCheck is true
-     * as if we are doing from web from backend / frontend to have same file hashes
-     * as I am using same assets folder in root for backend / frontend as to have files from same assets folder
+     * It will only be used when $backendCheck is true
+     * It will be helpful when backend and frontend both's all assets are same meaning all JS files and CSS files on backend and frontend are same. 
      */
     public $folderName = 'minify' ;
 
     /*
+     * These two options are for console request. If application have functionality to generate concated and compressed assets at console request.
+     *
+     * In this extention last file name of generated file totally depends on location from where request has made. So web requests and console request will genrate same files but names will be different. To solve that and have uniform name across WEB and console this two options are used. 
+     * first option is boolean which is to determine whether application wants to use this feature or not.
+     * Second option is string adjustment of path. Which should be removed from the file path to have same file names on console/web.
+     * 
      * will be used at _getSummaryFilesHash will fix path to have same hash value as frontend or backend when files generated from console.
      * At console level this will be used as when generating from console path will be different so some adjustment path should be decalared t make path same as
      * of running in web browser as console has path from console folder script
@@ -175,14 +185,19 @@ New Configuration Options
     public $layoutPrefixJS = false ;
 ```
 
+##Dependecnies
+* "yiisoft/yii2": "2.0.*",
+* "mrclay/minify": "~2.2",
+* "fedemotta/yii2-aws-sdk": "2.*"
 
 
-My Asset bundles dependencies
------------------------------
+##Yii2 configuration or structure that is expected for this extension to work
+
+###Example of Asset bundles dependencies ( Required )
 
 By giving dependencies and loading all JS/CSS files throught web application in a uniform sequence will create uniform minified JS/CSS files from extention for all pages as all pages have same JS/CSS files with same sequence. As the final name of JS/CSS file depends on the file content and file path so it is important to have configuration in this way.
 
-This is just example of my AssetBundle dependency you can create yours on the basis of your asset bundles.
+**This is just example of my AssetBundle dependency you can create yours on the basis of your asset bundles.**
 
 ```
 <?php
@@ -358,25 +373,29 @@ return [
 
 ```
 
-This is some fix i have to do it at my side to make things work.
+###This is some fix I have to done at my main.php ( Required )
 
-
+* Not allowing JS/CSS files to be load at AJAX requests as all of the needed will be there of the first request or main request.
 ```
         // start of config/main.php
         // removing js and css files being loaded on AJAX call
+        $bundles = "bundles-minify.php"; // having dependencies
         $bundlesFiles = require_once( $bundles ) ;
         if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')
         {
             $bundlesFiles = false ;
         }
+```
 
 
+* Another thing application needed folder names generated from backend/frontend have same name. As backend path will have "ROOT/backend/../assets" name can be different to solve that added this fix. Which will create same named folders for backend and frontend. Folder names will be same.
+
+```
         // Under components of config/main.php
-
         'assetManager' => [
             /*
              * when u have to make fix for images you will need it
-            */
+             */
             'hashCallback'=>function( $path ){
 
                 $path1 = $path ;
@@ -386,10 +405,15 @@ This is some fix i have to do it at my side to make things work.
                 
             },
 
-            'bundles' => $bundlesFiles,
+            'bundles' => $bundlesFiles, // need to be added
         ],
+```
 
+###These extra functions added at "\common\components\Helper" ( Required )
+* This are the function used in previous step so need to put them in "\common\components\Helper". 
 
+```  
+    // helper function should be added in helper file to achieve this.
     public static function getPathIdentical( $path )
     {
         if( strpos( $path , "_protected" ) !== false )
@@ -426,14 +450,11 @@ This is some fix i have to do it at my side to make things work.
     }
 
      
-
 ```
 
+###My AssetMinifyController ( Console Controller ) ( Optional )
 
-My AssetMinifyController ( Console Controller )
------------------------------------------------
-
-This will be used if you have scripts to deploy your all code from github push to your server and you have/do not have load balancing environment but if you want to generate all the assets from Script then you can call console  action in your script and initialize generation of all the asset bundles on your servers before any real call. This way on load balanced environment without sticky sessions all your server will have assets folder as well as It will generate minified files and upload it to S3.
+This will be helpfull if you have continuous deployment, now you want to generate all the assets from a console request and compress and concate them and upload them to S3 bucket. Just need to add this controller and call "php asset-minify/init" in continuous deployment script.
 
 
 ```
@@ -473,7 +494,7 @@ class AssetMinifyController extends Controller
 
         $view = new View();
         $view->S3Upload = true ;
-        $view->awsBucket = 'opsinsights-storage' ;
+        $view->awsBucket = 'aws-bucket-name' ;
         $view->assetsFolderPathPatch = '../../' ;
         $view->enableMinify = true ;
         $view->concatCss = true ; // concatenate css
@@ -512,11 +533,13 @@ class AssetMinifyController extends Controller
         (new JS($view))->export();
 
 
+        // exporting CSS/JS for new layout
         $this->layout = "main" ;
         $view->assetBundles = [] ;
         $view->cssFiles = [] ;
         $view->jsFiles = [] ;
 
+        //AppAssetVersion2 is the main AssetBundle to "main" layout
         $view->registerAssetBundle( AppAssetVersion2::className() );
 
         $assetBundle = $view->assetBundles ;
@@ -567,4 +590,6 @@ class AssetMinifyController extends Controller
 }
 
 ```
+
+
 

@@ -106,7 +106,7 @@ return [
 
 Documentation/Explanation of the Configuration Options
 ------------------------------------------------------
-###New Configuration Options
+###New Configuration Options###
 
 ```
  /**
@@ -185,15 +185,15 @@ Documentation/Explanation of the Configuration Options
     public $layoutPrefixJS = false ;
 ```
 
-##Dependecnies
+##Dependecnies##
 * "yiisoft/yii2": "2.0.*",
 * "mrclay/minify": "~2.2",
 * "fedemotta/yii2-aws-sdk": "2.*"
 
 
-##Yii2 configuration or structure that is expected for this extension to work
+##Yii2 configuration or structure that is expected for this extension to work##
 
-###Example of Asset bundles dependencies ( Required )
+###Example of Asset bundles dependencies ( Required )###
 
 By giving dependencies and loading all JS/CSS files throught web application in a uniform sequence will create uniform minified JS/CSS files from extention for all pages as all pages have same JS/CSS files with same sequence. As the final name of JS/CSS file depends on the file content and file path so it is important to have configuration in this way.
 
@@ -373,7 +373,7 @@ return [
 
 ```
 
-###This is some fix I have to done at my main.php ( Required )
+###This is some fix I have to done at my main.php ( Required )###
 
 * Not allowing JS/CSS files to be load at AJAX requests as all of the needed will be there of the first request or main request.
 ```
@@ -409,7 +409,7 @@ return [
         ],
 ```
 
-###These extra functions added at "\common\components\Helper" ( Required )
+###These extra functions added at "\common\components\Helper" ( Required )###
 * This are the function used in previous step so need to put them in "\common\components\Helper". 
 
 ```  
@@ -452,7 +452,7 @@ return [
      
 ```
 
-###My AssetMinifyController ( Console Controller ) ( Optional )
+###My AssetMinifyController ( Console Controller ) ( Optional )###
 
 This will be helpfull if you have continuous deployment, now you want to generate all the assets from a console request and compress and concate them and upload them to S3 bucket. Just need to add this controller and call "php asset-minify/init" in continuous deployment script.
 

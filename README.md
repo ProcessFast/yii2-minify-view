@@ -197,10 +197,12 @@ Documentation/Explanation of the Configuration Options
 
 By giving dependencies and loading all JS/CSS files throught web application in a uniform sequence will create uniform minified JS/CSS files from extention for all pages as all pages have same JS/CSS files with same sequence. As the final name of JS/CSS file depends on the file content and file path so it is important to have configuration in this way.
 
-**This is just example of my AssetBundle dependency you can create yours on the basis of your asset bundles.**
+**This is just example of my "bundles-minify.php" which handles dependency you can create yours on the basis of your asset bundles.**
 
 ```
 <?php
+
+//bundles-minify.php
 
 if( YII_DEBUG )
 {

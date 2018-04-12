@@ -479,7 +479,7 @@ use processfast\yii\minify\components\JS;
 use Yii;
 use yii\web\AssetBundle;
 
-$url = "/dev/ops-insights/" ;
+$url = "/dev/{application-folder-name}/" ;
 \Yii::setAlias('@webroot', \Yii::$app->basePath."/../../" );
 \Yii::setAlias('@web', $url );
 
@@ -490,7 +490,7 @@ class AssetMinifyController extends Controller
     {
         ini_set( 'max_execution_time' , 480 );
 
-        $url = "/dev/ops-insights/" ;
+        $url = "/dev/{application-folder-name}/" ;
         $webroot = \Yii::$app->basePath."/../../" ;
         $web = $url ;
 

@@ -131,7 +131,10 @@ class CSS extends MinifyComponent
             $imports = $this->collectImports($css);
             $fonts = $this->collectFonts($css);
 
-            $content = gzencode( $charsets . $imports . $fonts . $css ,  9);
+            $content = $charsets . $imports . $fonts . $css ;
+            if( $this->view->gzipEncodeCss ){
+                $content = gzencode( $content ,  9);
+            }
             file_put_contents($resultFile, $content );
 
             if (false !== $this->view->fileMode) {
@@ -162,7 +165,16 @@ class CSS extends MinifyComponent
     protected function removeCssComments(&$code)
     {
         if (true === $this->view->removeComments) {
-            $code = preg_replace('#/\*(?:[^*]*(?:\*(?!/))*)*\*/#', '', $code);
+
+            //https://stackoverflow.com/questions/1581049/preg-replace-out-css-comments
+            $regex = array(
+                "`^([\t\s]+)`ism"=>'',
+                "`^\/\*(.+?)\*\/`ism"=>"",
+                "`([\n\A;]+)\/\*(.+?)\*\/`ism"=>"$1",
+                "`([\n\A;\s]+)//(.+?)[\n\r]`ism"=>"$1\n",
+                "`(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+`ism"=>"\n"
+            );
+            $code = preg_replace(array_keys($regex),$regex,$code);
         }
     }
 

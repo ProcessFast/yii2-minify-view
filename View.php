@@ -190,20 +190,14 @@ class View extends \yii\web\View
      */
     public $excludeFiles = [];
 
-    /*
-     *  Updated params by Jaimin MosLake to give more functionality
-     */
-
     /**
      * @var boolean
-     * whether you want to use S3Bucket or not
-     * By default it will be false
      */
     public $S3Upload = false ;
 
+
     /**
      * @var boolean
-     * Name of awsBucket
      */
     public $awsBucket = null ;
 
@@ -211,63 +205,55 @@ class View extends \yii\web\View
      * @var boolean
      * It is for linking Resource folder to asset files
      * if Resources like images above one folder it should be "../" if two folders above "../../"
-     * You want to load all the images from s3 now you have images folder in root and you have dev , qa , prod folder
-     * and css and js inside those folder now you have to link images in those css file.
-     * You have to use this option to do that.
      */
     public $assetsFolderPathPatch = null ;
 
+
     /*
      * boolean
-     * backend checke will help take asset from root/minify folder for backedn instead of root/backend/minifiy
-     * If backend and frontend has same assets and you want to use same location to store asset
-     * you can make thi true. By this it will use root/minify other then root/backedn/minify
-     * to copy files to S3
+     * backend checke will help keep assets into root/minify folder instead of root/backend/minifiy for backend
      */
     public $backendCheck = false ;
-
     /*
      * Folder name where minified files will be kept
-     * Here i have devided it will be used when $backendCheck is true
-     * as if we are doing from web from backend / frontend to have same file hashes
-     * as I am using same assets folder in root for backend / frontend as to have files from same assets folder
      */
     public $folderName = 'minify' ;
-
     /*
      * will be used at _getSummaryFilesHash will fix path to have same hash value as frontend or backend when files generated from console.
-     * At console level this will be used as when generating from console path will be different so some adjustment path should be decalared t make path same as
-     * of running in web browser as console has path from console folder script
-     *
-     * so when you generate from console  make modifyPath true
-     * and modifyPathData regarding your assets folder to console folder
      */
     public $modifyPath = false  ;
     public $modifyPathData = "" ;
 
-
-    /*
-     * It helps if you want to add prefix to any file as it will mostly create file name
-     * as {prefix}-all-in-one-{HASH}.{js/css}
-     * so if you want to give a prefix for certain layout
-     * then you can do it by this option.
-     * Pass layout name as array key and pass prefix name as array value
-     * ex :  for main layout if you want newmain prefix
-     * you have to pass array like ["main"=>"newmain"]
-     * if you do not wont prefix do not do anything just live it a blank array
+    /**
+     * This one will be added as JS file prefix while it will be uploaded to S3 bucket
+     * @var string
      */
-    public $layoutPrefixArray = [] ;
+    public $prefixJsFile = "" ;
 
-    /*
-     * Use layoutPrefixArray option for css true/false
+    /**
+     * This one will be added as CSS file prefix while it will be uploaded to S3 bucket
+     * @var string
      */
-    public $layoutPrefixCss = false ;
+    public $prefixCssFile = "" ;
 
-    /*
-     * Use layoutPrefixArray option for Js true/false
+    /**
+     * by the param it will be decided whether to encode content of js files into gzip or not
+     * @var bool
      */
-    public $layoutPrefixJS = false ;
+    public $gzipEncodeJs = false ;
 
+    /**
+     * by the param it will be decided whether to encode content of css files into gzip or not
+     * @var bool
+     */
+    public $gzipEncodeCss = false ;
+
+
+    /**
+     * this will tell the versionNumber of app. It will be included in filename while it will be uploaded to S3 bucket
+     * @var string
+     */
+    public $versionNumber = "";
 
     /**
      * @throws \processfast\yii\minify\Exception

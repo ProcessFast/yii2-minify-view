@@ -276,32 +276,20 @@ abstract class MinifyComponent
             $env = "prod" ;
         }
 
+        $prefixCss = $this->view->prefixCssFile;
+        $prefixJs = $this->view->prefixJsFile;
+
         $mime_type = null ;
         $fileName =  null ;
-
-        $prefix = "" ;
-        if(( $type == "CSS"  && $this->view->layoutPrefixCss ) || ( $type == "JS"  && $this->view->layoutPrefixJS ))
-        {
-            $layout = \Yii::$app->controller->layout ;
-            $layoutPrefixArray = $this->view->layoutPrefixArray ;
-            if( is_array($layoutPrefixArray) )
-            {
-                if( array_key_exists( $layout , $layoutPrefixArray ) )
-                {
-                    $prefix = $layoutPrefixArray[$layout] ;
-                }
-            }
-        }
-
         if( $type == "CSS" )
         {
             $mime_type = "text/css" ;
-            $fileName = "web-assets/".$env."/minify/".$prefix."all-in-one".$versionName."-".$hash.".css";
+            $fileName = "web-assets/".$env."/minify/".$prefixCss."all-in-one".$versionName."-".$hash.".css";
         }
         else if( $type == "JS" )
         {
             $mime_type = "application/javascript" ;
-            $fileName = "web-assets/".$env."/minify/".$prefix."all-in-one".$versionName."-".$hash.".js";
+            $fileName = "web-assets/".$env."/minify/".$prefixJs."all-in-one".$versionName."-".$hash.".js";
         }
 
         if( $typeIn == "FILENAME" )

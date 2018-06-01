@@ -13,7 +13,7 @@ Required to work accurately
 * All JS & CSS files [ mostly JS pluggins ] used in particular layout whether it belongs to a particular page which only required on widget initialization must be also added at in the main Asset file under dependency.  
 
 
-![License](https://poser.pugx.org/processfast/yii2-minify-view/license.svg)](https://packagist.org/packages/processfast/yii2-minify-view)
+[![License](https://poser.pugx.org/processfast/yii2-minify-view/license.svg)](https://packagist.org/packages/processfast/yii2-minify-view)
 [![Latest Stable Version](https://poser.pugx.org/processfast/yii2-minify-view/v/stable.svg)](https://packagist.org/packages/processfast/yii2-minify-view)
 [![Latest Unstable Version](https://poser.pugx.org/processfast/yii2-minify-view/v/unstable.svg)](https://packagist.org/packages/processfast/yii2-minify-view)
 [![Total Downloads](https://poser.pugx.org/processfast/yii2-minify-view/downloads.svg)](https://packagist.org/packages/processfast/yii2-minify-view)

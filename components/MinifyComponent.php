@@ -284,12 +284,12 @@ abstract class MinifyComponent
         if( $type == "CSS" )
         {
             $mime_type = "text/css" ;
-            $fileName = "web-assets/".$env."/minify/".$prefixCss."all-in-one".$versionName."-".$hash.".css";
+            $fileName = "web-assets/".$env."/minify/".$prefixCss."all-in-one-".$versionName."-".$hash.".css";
         }
         else if( $type == "JS" )
         {
             $mime_type = "application/javascript" ;
-            $fileName = "web-assets/".$env."/minify/".$prefixJs."all-in-one".$versionName."-".$hash.".js";
+            $fileName = "web-assets/".$env."/minify/".$prefixJs."all-in-one-".$versionName."-".$hash.".js";
         }
 
         if( $typeIn == "FILENAME" )

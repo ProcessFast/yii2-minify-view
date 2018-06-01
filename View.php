@@ -211,7 +211,7 @@ class View extends \yii\web\View
 
     /*
      * boolean
-     * backend checke will help take asset from root/minify folder for backedn instead of root/backend/minifiy
+     * backend checke will help keep assets into root/minify folder instead of root/backend/minifiy for backend
      */
     public $backendCheck = false ;
     /*
@@ -224,6 +224,36 @@ class View extends \yii\web\View
     public $modifyPath = false  ;
     public $modifyPathData = "" ;
 
+    /**
+     * This one will be added as JS file prefix while it will be uploaded to S3 bucket
+     * @var string
+     */
+    public $prefixJsFile = "" ;
+
+    /**
+     * This one will be added as CSS file prefix while it will be uploaded to S3 bucket
+     * @var string
+     */
+    public $prefixCssFile = "" ;
+
+    /**
+     * by the param it will be decided whether to encode content of js files into gzip or not
+     * @var bool
+     */
+    public $gzipEncodeJs = false ;
+
+    /**
+     * by the param it will be decided whether to encode content of css files into gzip or not
+     * @var bool
+     */
+    public $gzipEncodeCss = false ;
+
+
+    /**
+     * this will tell the versionNumber of app. It will be included in filename while it will be uploaded to S3 bucket
+     * @var string
+     */
+    public $versionNumber = "";
 
     /**
      * @throws \processfast\yii\minify\Exception

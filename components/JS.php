@@ -106,7 +106,10 @@ class JS extends MinifyComponent
                     ->min();
             }
 
-            $js = gzencode( $js , 9 );
+            if( $this->view->gzipEncodeJs ){
+                $js = gzencode( $js , 9 );
+            }
+
             file_put_contents($resultFile, $js);
 
             if (false !== $this->view->fileMode) {
